@@ -24,3 +24,29 @@ class Model:
         for n in self._nodi:
             self._grafo.add_node(n)
             self._idMap[n.constructorId] = n
+        self.addEdges(ai,af)
+
+    def addEdges(self, ai, af):
+        edges = DAO.getAllEdges(ai,af)
+        for e in edges:
+            n1 = self._idMap.get(e[0])
+            n2 = self._idMap.get(e[1])
+            if n1 is None or n2 is None:
+                continue
+            self._grafo.add_edge(n1, n2, weight=e[2])
+
+    def get_top3_archi(self):
+        archi = []
+        for u, v, data in self._grafo.edges(data=True):
+            archi.append((u, v, data["weight"]))
+        archi.sort(key=lambda x: x[2], reverse=True)
+        return archi[:3]
+
+    def getInfoCompConnessa(self):
+        if self._grafo.number_of_nodes() == 0:
+            return 0, set()
+        numero = nx.number_connected_components(self._grafo)
+        piu_grande = max(nx.connected_components(self._grafo), key=len)
+        piu_grande_ordinata = sorted(piu_grande, key=lambda x: self._grafo.degree(x), reverse=True)
+        return numero, piu_grande_ordinata
+

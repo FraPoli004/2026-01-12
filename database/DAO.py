@@ -47,3 +47,27 @@ class DAO():
         conn.close()
         return results
 
+    @staticmethod
+    def getAllEdges(ai, af):
+        conn = DBConnect.get_connection()
+        result = []
+        cursor = conn.cursor(dictionary=True)
+        query = """select distinct c1.constructorId  as cn1, c2.constructorId  as cn2, count(distinct r1.driverId ) as peso
+                   from constructors c1, constructors c2, results r1, results r2, races rs1, races rs2
+                   where c1.constructorId < c2.constructorId 
+                   and c1.constructorId = r1.constructorId 
+                   and c2.constructorId = r2.constructorId 
+                   and r1.driverId = r2.driverId
+                   and rs1.raceId = r1.raceId
+                   and rs2.raceId = r2.raceId
+                   and rs1.year >=  %s and rs1.year <= %s and r1.position is not null
+                   and rs2.year >=  %s and rs2.year <= %s and r2.position is not null	
+                   group by c1.constructorId , c2.constructorId """
+        cursor.execute(query, (ai,af,ai,af))
+        for row in cursor:
+            result.append((row["cn1"], row["cn2"], row["peso"]))
+        cursor.close()
+        conn.close()
+        return result
+
+

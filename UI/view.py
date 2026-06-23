@@ -5,6 +5,13 @@ class View(ft.UserControl):
     def __init__(self, page: ft.Page):
         super().__init__()
         # page stuff
+        self.txt_result = None
+        self._btnCerca = None
+        self._txtInK = None
+        self._btnstampa = None
+        self._btnCreaGrafo = None
+        self._ddAnno2 = None
+        self._ddAnno1 = None
         self._page = page
         self._page.title = "Esame del 15/09/2025"
         self._page.horizontal_alignment = 'CENTER'
@@ -25,6 +32,7 @@ class View(ft.UserControl):
 
         self._ddAnno1 = ft.Dropdown(label="Da", hint_text="Anno")
         self._ddAnno2 = ft.Dropdown(label="A", hint_text="Anno")
+        self._controller.fillDDsYears()
         self._btnCreaGrafo = ft.ElevatedButton(text="Crea Grafo", on_click=self._controller.handleCreaGrafo)
 
         cont1 = ft.Container(self._ddAnno1, width=250)
